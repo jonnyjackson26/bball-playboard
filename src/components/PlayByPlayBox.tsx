@@ -2,17 +2,20 @@
 
 import { Play, Player, Action } from '@/types'
 import { useState } from 'react'
-import { Edit2, Trash2 } from 'lucide-react'
+import { Edit2, Trash2, BarChart3 } from 'lucide-react'
 
 interface PlayByPlayBoxProps {
   plays: Play[]
   homePlayers: Player[]
   awayPlayers: Player[]
+  homeScore: number
+  awayScore: number
   onEditPlay?: (playId: string, newPlayerName: string, newAction: string) => void
   onDeletePlay?: (playId: string) => void
+  onOpenStats?: () => void
 }
 
-export default function PlayByPlayBox({ plays, homePlayers, awayPlayers, onEditPlay, onDeletePlay }: PlayByPlayBoxProps) {
+export default function PlayByPlayBox({ plays, homePlayers, awayPlayers, homeScore, awayScore, onEditPlay, onDeletePlay, onOpenStats }: PlayByPlayBoxProps) {
   const [editingPlayId, setEditingPlayId] = useState<string | null>(null)
   const [editPlayerName, setEditPlayerName] = useState('')
   const [editAction, setEditAction] = useState('')
@@ -88,7 +91,16 @@ export default function PlayByPlayBox({ plays, homePlayers, awayPlayers, onEditP
   return (
     <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
       <div className="p-4 pb-2 flex-shrink-0">
-        <h3 className="text-lg font-semibold text-gray-900">Play by Play</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900">Play by Play</h3>
+          <button
+            onClick={onOpenStats}
+            className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm"
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span>See All Stats</span>
+          </button>
+        </div>
       </div>
       <div className="flex-1 overflow-hidden">
         <div className="h-full overflow-y-auto px-4 pb-4">

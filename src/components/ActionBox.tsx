@@ -54,8 +54,8 @@ export default function ActionBox({ selectedPlayer, onActionClick }: ActionBoxPr
     ],
     [
       { action: defensiveActions.find(a => a.type === 'FOUL')!, tooltip: 'Foul' },
-      { action: { type: 'TECHNICAL_FOUL', label: 'Tech', category: 'defensive' }, tooltip: 'Technical Foul' },
-      { action: { type: 'FLAGRANT_FOUL', label: 'Flagrant', category: 'defensive' }, tooltip: 'Flagrant Foul' }
+      { action: defensiveActions.find(a => a.type === 'TECHNICAL_FOUL')!, tooltip: 'Technical Foul' },
+      { action: defensiveActions.find(a => a.type === 'FLAGRANT_FOUL')!, tooltip: 'Flagrant Foul' }
     ]
   ]
 

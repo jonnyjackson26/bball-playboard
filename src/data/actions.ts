@@ -17,6 +17,8 @@ export const actions: Action[] = [
   { type: 'STEAL', label: 'Steal', category: 'defensive' },
   { type: 'BLOCK', label: 'Block', category: 'defensive' },
   { type: 'FOUL', label: 'Foul', category: 'defensive' },
+  { type: 'TECHNICAL_FOUL', label: 'Tech', category: 'defensive' },
+  { type: 'FLAGRANT_FOUL', label: 'Flagrant', category: 'defensive' },
 ]
 
 export const offensiveActions = actions.filter(action => action.category === 'offensive')

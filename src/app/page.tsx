@@ -6,6 +6,7 @@ import TeamBox from '@/components/TeamBox'
 import ActionBox from '@/components/ActionBox'
 import Scoreboard from '@/components/Scoreboard'
 import PlayByPlayBox from '@/components/PlayByPlayBox'
+import StatsBottomSheet from '@/components/StatsBottomSheet'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import SettingsBar from '@/components/SettingsBar'
 import { offensiveActions, defensiveActions } from '@/data/actions'
@@ -40,6 +41,7 @@ export default function Home() {
   const [awayScore, setAwayScore] = useState(0)
   const [undoStack, setUndoStack] = useState<{plays: Play[], homeScore: number, awayScore: number}[]>([])
   const [redoStack, setRedoStack] = useState<{plays: Play[], homeScore: number, awayScore: number}[]>([])
+  const [isStatsOpen, setIsStatsOpen] = useState(false)
 
   const handlePlayerSelect = (player: Player) => {
     setSelectedPlayer(player)
@@ -324,8 +326,11 @@ export default function Home() {
                 plays={plays} 
                 homePlayers={homePlayers}
                 awayPlayers={awayPlayers}
+                homeScore={homeScore}
+                awayScore={awayScore}
                 onEditPlay={handleEditPlay}
                 onDeletePlay={handleDeletePlay}
+                onOpenStats={() => setIsStatsOpen(true)}
               />
             </Panel>
           </PanelGroup>
@@ -358,6 +363,17 @@ export default function Home() {
           </PanelGroup>
         </Panel>
       </PanelGroup>
+      
+      {/* Stats Bottom Sheet */}
+      <StatsBottomSheet
+        isOpen={isStatsOpen}
+        onClose={() => setIsStatsOpen(false)}
+        plays={plays}
+        homePlayers={homePlayers}
+        awayPlayers={awayPlayers}
+        homeScore={homeScore}
+        awayScore={awayScore}
+      />
     </div>
   )
 }
