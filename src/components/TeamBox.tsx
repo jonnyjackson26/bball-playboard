@@ -13,6 +13,8 @@ interface TeamBoxProps {
   onPlayerSelect: (player: Player) => void
   onPlayersReorder: (players: Player[]) => void
   onAddPlayer: (name: string, jerseyNumber?: string | number) => void
+  onEditPlayer?: (playerId: string, name: string, jerseyNumber?: string | number) => void
+  onDeletePlayer?: (playerId: string) => void
 }
 
 const PLAYER_CARD_HEIGHT = 56; // px, adjust if needed for your PlayerCard
@@ -25,7 +27,9 @@ export default function TeamBox({
   selectedPlayer, 
   onPlayerSelect, 
   onPlayersReorder,
-  onAddPlayer 
+  onAddPlayer,
+  onEditPlayer,
+  onDeletePlayer
 }: TeamBoxProps) {
   const [localPlayers, setLocalPlayers] = useState(players)
   const [showAddForm, setShowAddForm] = useState(false)
@@ -160,6 +164,8 @@ export default function TeamBox({
                     player={player}
                     isSelected={selectedPlayer?.id === player.id}
                     onSelect={onPlayerSelect}
+                    onEdit={onEditPlayer}
+                    onDelete={onDeletePlayer}
                   />
                   {/* Divider after 5th card if there are more */}
                   {showDivider && idx === 4 && (

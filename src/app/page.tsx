@@ -266,6 +266,38 @@ export default function Home() {
     setAwayPlayers(prev => [...prev, newPlayer])
   }
 
+  const handleEditHomePlayer = (playerId: string, name: string, jerseyNumber?: string | number) => {
+    setHomePlayers(prev => prev.map(player => 
+      player.id === playerId 
+        ? { ...player, name, jerseyNumber }
+        : player
+    ))
+  }
+
+  const handleEditAwayPlayer = (playerId: string, name: string, jerseyNumber?: string | number) => {
+    setAwayPlayers(prev => prev.map(player => 
+      player.id === playerId 
+        ? { ...player, name, jerseyNumber }
+        : player
+    ))
+  }
+
+  const handleDeleteHomePlayer = (playerId: string) => {
+    setHomePlayers(prev => prev.filter(player => player.id !== playerId))
+    // If the deleted player was selected, clear selection
+    if (selectedPlayer?.id === playerId) {
+      setSelectedPlayer(null)
+    }
+  }
+
+  const handleDeleteAwayPlayer = (playerId: string) => {
+    setAwayPlayers(prev => prev.filter(player => player.id !== playerId))
+    // If the deleted player was selected, clear selection
+    if (selectedPlayer?.id === playerId) {
+      setSelectedPlayer(null)
+    }
+  }
+
   // Determine which team is selected
   const selectedTeam = selectedPlayer?.team
 
@@ -283,6 +315,8 @@ export default function Home() {
                 onPlayerSelect={handlePlayerSelect}
                 onPlayersReorder={handleAwayPlayersReorder}
                 onAddPlayer={handleAddAwayPlayer}
+                onEditPlayer={handleEditAwayPlayer}
+                onDeletePlayer={handleDeleteAwayPlayer}
               />
             </Panel>
             <PanelResizeHandle className="h-2 bg-gray-300 hover:bg-gray-400 transition-colors cursor-row-resize flex items-center justify-center">
@@ -349,6 +383,8 @@ export default function Home() {
                 onPlayerSelect={handlePlayerSelect}
                 onPlayersReorder={handleHomePlayersReorder}
                 onAddPlayer={handleAddHomePlayer}
+                onEditPlayer={handleEditHomePlayer}
+                onDeletePlayer={handleDeleteHomePlayer}
               />
             </Panel>
             <PanelResizeHandle className="h-2 bg-gray-300 hover:bg-gray-400 transition-colors cursor-row-resize flex items-center justify-center">
