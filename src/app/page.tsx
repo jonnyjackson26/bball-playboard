@@ -94,6 +94,84 @@ export default function Home() {
     setAwayScore(next.awayScore)
   }
 
+  const handleExport = (format: 'csv' | 'xlsx' | 'txt') => {
+    if (plays.length === 0) {
+      alert('No plays to export')
+      return
+    }
+
+    const formatTime = (timestamp: Date) => {
+      return timestamp.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      })
+    }
+
+    const formatDate = (timestamp: Date) => {
+      return timestamp.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      })
+    }
+
+    const exportData = plays.map(play => ({
+      Date: formatDate(play.timestamp),
+      Time: formatTime(play.timestamp),
+      Player: play.playerName,
+      Action: play.action,
+      Team: play.team === 'home' ? 'Home' : 'Away',
+      Points: play.points || 0
+    }))
+
+    const headers = ['Date', 'Time', 'Player', 'Action', 'Team', 'Points']
+    const csvContent = [
+      headers.join(','),
+      ...exportData.map(row => 
+        headers.map(header => `"${row[header as keyof typeof row]}"`).join(',')
+      )
+    ].join('\n')
+
+    const txtContent = exportData.map(row => 
+      `${row.Date} ${row.Time} - ${row.Player} (${row.Team}): ${row.Action}${row.Points > 0 ? ` (+${row.Points}pts)` : ''}`
+    ).join('\n')
+
+    let content = ''
+    let filename = ''
+    let mimeType = ''
+
+    switch (format) {
+      case 'csv':
+        content = csvContent
+        filename = `playbyplay_${new Date().toISOString().split('T')[0]}.csv`
+        mimeType = 'text/csv'
+        break
+      case 'xlsx':
+        // For XLSX, we'll create a simple CSV-like structure that Excel can open
+        content = csvContent
+        filename = `playbyplay_${new Date().toISOString().split('T')[0]}.xlsx`
+        mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        break
+      case 'txt':
+        content = txtContent
+        filename = `playbyplay_${new Date().toISOString().split('T')[0]}.txt`
+        mimeType = 'text/plain'
+        break
+    }
+
+    const blob = new Blob([content], { type: mimeType })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   const handleHomePlayersReorder = (players: Player[]) => {
     setHomePlayers(players)
   }
@@ -165,6 +243,7 @@ export default function Home() {
             onRedo={handleRedo}
             canUndo={undoStack.length > 0}
             canRedo={redoStack.length > 0}
+            onExport={handleExport}
           />
           <PanelGroup direction="vertical" className="h-full flex-1">
             <Panel minSize={20} defaultSize={35} className="min-h-0 flex-shrink-0">
