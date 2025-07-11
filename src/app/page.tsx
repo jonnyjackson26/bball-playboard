@@ -180,24 +180,24 @@ export default function Home() {
     setAwayPlayers(players)
   }
 
-  const handleAddHomePlayer = () => {
+  const handleAddHomePlayer = (name: string, jerseyNumber?: string | number) => {
     const newPlayer: Player = {
       id: `h${Date.now()}`,
-      name: `New Player ${homePlayers.length + 1}`,
+      name: name,
       team: 'home',
       position: homePlayers.length,
-      jerseyNumber: homePlayers.length + 1
+      jerseyNumber: jerseyNumber
     }
     setHomePlayers(prev => [...prev, newPlayer])
   }
 
-  const handleAddAwayPlayer = () => {
+  const handleAddAwayPlayer = (name: string, jerseyNumber?: string | number) => {
     const newPlayer: Player = {
       id: `a${Date.now()}`,
-      name: `New Player ${awayPlayers.length + 1}`,
+      name: name,
       team: 'away',
       position: awayPlayers.length,
-      jerseyNumber: awayPlayers.length + 1
+      jerseyNumber: jerseyNumber
     }
     setAwayPlayers(prev => [...prev, newPlayer])
   }

@@ -3,7 +3,7 @@ export interface Player {
   name: string
   team: 'home' | 'away'
   position: number // 0-4 for starters, 5+ for bench
-  jerseyNumber?: number
+  jerseyNumber?: string | number
 }
 
 export interface Play {

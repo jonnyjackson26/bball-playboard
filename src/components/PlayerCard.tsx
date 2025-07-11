@@ -25,6 +25,15 @@ export default function PlayerCard({ player, isSelected, onSelect }: PlayerCardP
     transition,
   }
 
+  const formatJerseyNumber = (jerseyNumber?: string | number) => {
+    if (!jerseyNumber) return null
+    if (typeof jerseyNumber === 'number') {
+      return `#${jerseyNumber}`
+    }
+    // For string jersey numbers, don't add hashtag
+    return jerseyNumber
+  }
+
   return (
     <div
       ref={setNodeRef}
@@ -56,9 +65,11 @@ export default function PlayerCard({ player, isSelected, onSelect }: PlayerCardP
         <div>
           <div className="font-semibold text-gray-900 text-sm">{player.name}</div>
         </div>
-        <div className="text-sm font-medium text-gray-600">
-          #{player.jerseyNumber}
-        </div>
+        {player.jerseyNumber && (
+          <div className="text-sm font-medium text-gray-600">
+            {formatJerseyNumber(player.jerseyNumber)}
+          </div>
+        )}
       </div>
     </div>
   )
