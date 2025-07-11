@@ -1,12 +1,22 @@
 'use client'
 
-import { Play } from '@/types'
+import { Play, Player, Action } from '@/types'
+import { useState } from 'react'
+import { Edit2, Trash2 } from 'lucide-react'
 
 interface PlayByPlayBoxProps {
   plays: Play[]
+  homePlayers: Player[]
+  awayPlayers: Player[]
+  onEditPlay?: (playId: string, newPlayerName: string, newAction: string) => void
+  onDeletePlay?: (playId: string) => void
 }
 
-export default function PlayByPlayBox({ plays }: PlayByPlayBoxProps) {
+export default function PlayByPlayBox({ plays, homePlayers, awayPlayers, onEditPlay, onDeletePlay }: PlayByPlayBoxProps) {
+  const [editingPlayId, setEditingPlayId] = useState<string | null>(null)
+  const [editPlayerName, setEditPlayerName] = useState('')
+  const [editAction, setEditAction] = useState('')
+
   const formatTime = (timestamp: Date) => {
     return timestamp.toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -27,6 +37,53 @@ export default function PlayByPlayBox({ plays }: PlayByPlayBoxProps) {
     if (action.includes('FOUL')) return 'text-red-600'
     return 'text-gray-600'
   }
+
+  const formatPlayAction = (action: string, points?: number) => {
+    // Remove the "0" suffix for non-scoring plays
+    if (points && points > 0) {
+      return `${action} +${points}pts`
+    }
+    return action
+  }
+
+  const handleEdit = (play: Play) => {
+    setEditingPlayId(play.id)
+    setEditPlayerName(play.playerName)
+    setEditAction(play.action)
+  }
+
+  const handleSaveEdit = () => {
+    if (editingPlayId && onEditPlay) {
+      onEditPlay(editingPlayId, editPlayerName, editAction)
+      setEditingPlayId(null)
+      setEditPlayerName('')
+      setEditAction('')
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingPlayId(null)
+    setEditPlayerName('')
+    setEditAction('')
+  }
+
+  const handleDelete = (playId: string) => {
+    if (onDeletePlay) {
+      onDeletePlay(playId)
+    }
+  }
+
+  // Get all available players
+  const allPlayers = [...homePlayers, ...awayPlayers]
+  
+  // Get all available actions
+  const allActions = [
+    'FT Made', '2PT Made', '3PT Made',
+    'FT Miss', '2PT Miss', '3PT Miss',
+    'Assist', 'Turnover', 'O Rebound',
+    'D Rebound', 'Steal', 'Block',
+    'Foul', 'Tech', 'Flagrant'
+  ]
 
   return (
     <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
@@ -55,22 +112,83 @@ export default function PlayByPlayBox({ plays }: PlayByPlayBoxProps) {
                     ${play.team === 'home' ? 'border-r-4 border-r-blue-200' : 'border-r-4 border-r-red-200'}
                   `}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-semibold text-gray-900">{play.playerName}</span>
-                        <span className={`font-medium ${getActionColor(play.action)}`}>
-                          {play.action}
-                        </span>
-                        {play.points && (
-                          <span className="text-green-600 font-bold">+{play.points}pts</span>
-                        )}
+                  {editingPlayId === play.id ? (
+                    <div className="space-y-2">
+                      <div className="flex space-x-2">
+                        <select
+                          value={editPlayerName}
+                          onChange={(e) => setEditPlayerName(e.target.value)}
+                          className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        >
+                          <option value="">Select Player</option>
+                          {allPlayers.map(player => (
+                            <option key={player.id} value={player.name}>
+                              {player.name}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={editAction}
+                          onChange={(e) => setEditAction(e.target.value)}
+                          className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        >
+                          <option value="">Select Action</option>
+                          {allActions.map(action => (
+                            <option key={action} value={action}>
+                              {action}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={handleSaveEdit}
+                          disabled={!editPlayerName || !editAction}
+                          className="px-3 py-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-xs rounded transition-colors"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="px-3 py-1 bg-gray-300 hover:bg-gray-400 text-gray-700 text-xs rounded transition-colors"
+                        >
+                          Cancel
+                        </button>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-500">
-                      {formatTime(play.timestamp)}
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-semibold text-gray-900">{play.playerName}</span>
+                          <span className={`font-medium ${getActionColor(play.action)}`}>
+                            {formatPlayAction(play.action, play.points)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="text-xs text-gray-500">
+                          {formatTime(play.timestamp)}
+                        </div>
+                        <div className="flex space-x-1">
+                          <button
+                            onClick={() => handleEdit(play)}
+                            className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                            title="Edit play"
+                          >
+                            <Edit2 className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(play.id)}
+                            className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                            title="Delete play"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -8,6 +8,7 @@ import Scoreboard from '@/components/Scoreboard'
 import PlayByPlayBox from '@/components/PlayByPlayBox'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import SettingsBar from '@/components/SettingsBar'
+import { offensiveActions, defensiveActions } from '@/data/actions'
 
 // Sample data for demonstration
 const sampleHomePlayers: Player[] = [
@@ -92,6 +93,67 @@ export default function Home() {
     setPlays(next.plays)
     setHomeScore(next.homeScore)
     setAwayScore(next.awayScore)
+  }
+
+  const handleEditPlay = (playId: string, newPlayerName: string, newAction: string) => {
+    // Save current state to undo stack
+    setUndoStack(prev => [{ plays, homeScore, awayScore }, ...prev])
+    setRedoStack([])
+
+    const updatedPlays = plays.map(play => {
+      if (play.id === playId) {
+        // Find the action to get points
+        const action = [...offensiveActions, ...defensiveActions].find(a => a.label === newAction)
+        const points = action?.points || 0
+        
+        return {
+          ...play,
+          playerName: newPlayerName,
+          action: newAction,
+          points: points
+        }
+      }
+      return play
+    })
+
+    setPlays(updatedPlays)
+
+    // Recalculate scores
+    let newHomeScore = 0
+    let newAwayScore = 0
+    
+    updatedPlays.forEach(play => {
+      if (play.points) {
+        if (play.team === 'home') {
+          newHomeScore += play.points
+        } else {
+          newAwayScore += play.points
+        }
+      }
+    })
+
+    setHomeScore(newHomeScore)
+    setAwayScore(newAwayScore)
+  }
+
+  const handleDeletePlay = (playId: string) => {
+    // Save current state to undo stack
+    setUndoStack(prev => [{ plays, homeScore, awayScore }, ...prev])
+    setRedoStack([])
+
+    const playToDelete = plays.find(play => play.id === playId)
+    const updatedPlays = plays.filter(play => play.id !== playId)
+
+    setPlays(updatedPlays)
+
+    // Recalculate scores
+    if (playToDelete && playToDelete.points) {
+      if (playToDelete.team === 'home') {
+        setHomeScore(prev => prev - playToDelete.points!)
+      } else {
+        setAwayScore(prev => prev - playToDelete.points!)
+      }
+    }
   }
 
   const handleExport = (format: 'csv' | 'xlsx' | 'txt') => {
@@ -258,7 +320,13 @@ export default function Home() {
               <div className="w-8 h-1 rounded bg-gray-500" />
             </PanelResizeHandle>
             <Panel minSize={20} defaultSize={65} className="flex flex-col min-h-0">
-              <PlayByPlayBox plays={plays} />
+              <PlayByPlayBox 
+                plays={plays} 
+                homePlayers={homePlayers}
+                awayPlayers={awayPlayers}
+                onEditPlay={handleEditPlay}
+                onDeletePlay={handleDeletePlay}
+              />
             </Panel>
           </PanelGroup>
         </Panel>
