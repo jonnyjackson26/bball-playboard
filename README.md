@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PlayBoard - Live Basketball Game Tracker
+
+A Next.js web application for tracking basketball game stats and play-by-play in real-time.
+
+## Features
+
+- **Team Management**: Drag and drop player cards to reorder starters and bench players
+- **Live Scoreboard**: Real-time score tracking with a professional scoreboard design
+- **Action Tracking**: Comprehensive basketball actions including offensive and defensive plays
+- **Play-by-Play**: Stack-style play history with newest plays on top
+- **Player Selection**: Click-to-select players before recording actions
+- **Responsive Design**: Works on desktop and mobile devices
+
+## Tech Stack
+
+- **Next.js 15** with App Router
+- **TypeScript** for type safety
+- **Tailwind CSS** for styling
+- **@dnd-kit** for drag and drop functionality
+- **Supabase** for backend (configured but not yet integrated)
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+   ```bash
+   npm install
+   ```
+
+2. Run the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## How to Use
+
+1. **Select a Player**: Click on any player card from either team
+2. **Choose an Action**: Click on an action button (offensive or defensive)
+3. **Record the Play**: The play will automatically be added to the play-by-play
+4. **Reorder Players**: Drag and drop player cards to change their position
+5. **Add Players**: Use the "Add Player" button to add new players to teams
+
+## Project Structure
+
+```
+src/
+├── app/                 # Next.js app router
+├── components/          # React components
+│   ├── ActionBox.tsx   # Action buttons
+│   ├── PlayerCard.tsx  # Individual player card
+│   ├── PlayByPlayBox.tsx # Play history
+│   ├── Scoreboard.tsx  # Live scoreboard
+│   └── TeamBox.tsx     # Team with players
+├── data/               # Static data
+│   └── actions.ts      # Basketball action definitions
+├── lib/                # Utilities
+│   └── supabase.ts     # Supabase client
+└── types/              # TypeScript types
+    └── index.ts        # Data model interfaces
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Basketball Actions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Offensive Actions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 2PT Made/Missed
+- 3PT Made/Missed
+- Free Throw Made/Missed
+- Assist
+- Turnover
+- Offensive Rebound
 
-## Learn More
+### Defensive Actions
 
-To learn more about Next.js, take a look at the following resources:
+- Defensive Rebound
+- Steal
+- Block
+- Foul
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Future Enhancements
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Supabase integration for data persistence
+- User authentication
+- Multiple game support
+- Advanced statistics
+- Export functionality
+- Real-time collaboration
