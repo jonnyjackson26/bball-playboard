@@ -30,7 +30,7 @@ export default function PlayerCard({ player, isSelected, onSelect }: PlayerCardP
       ref={setNodeRef}
       style={style}
       className={`
-        p-3 mb-2 rounded-lg border-2 flex items-center cursor-pointer select-none
+        p-2 mb-1 rounded-lg border-2 flex items-center cursor-pointer select-none
         ${isSelected 
           ? 'border-blue-500 bg-blue-50' 
           : 'border-gray-200 bg-white hover:border-gray-300'
@@ -46,21 +46,18 @@ export default function PlayerCard({ player, isSelected, onSelect }: PlayerCardP
         {...attributes}
         {...listeners}
         onClick={e => e.stopPropagation()}
-        className="mr-3 flex items-center cursor-grab active:cursor-grabbing"
+        className="mr-2 flex items-center cursor-grab active:cursor-grabbing"
         tabIndex={-1}
         aria-label="Drag to reorder"
       >
-        <GripVertical className="w-5 h-5 text-gray-400" />
+        <GripVertical className="w-4 h-4 text-gray-400" />
       </span>
       <div className="flex-1 flex items-center justify-between">
         <div>
-          <div className="font-semibold text-gray-900">{player.name}</div>
-          {player.jerseyNumber && (
-            <div className="text-sm text-gray-500">#{player.jerseyNumber}</div>
-          )}
+          <div className="font-semibold text-gray-900 text-sm">{player.name}</div>
         </div>
-        <div className="text-xs text-gray-400">
-          {player.position < 5 ? 'Starter' : 'Bench'}
+        <div className="text-sm font-medium text-gray-600">
+          #{player.jerseyNumber}
         </div>
       </div>
     </div>

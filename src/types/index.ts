@@ -32,6 +32,8 @@ export type ActionType =
   | 'FREE_THROW_MADE' | 'FREE_THROW_MISSED' | 'ASSIST' | 'TURNOVER' | 'OFFENSIVE_REBOUND'
   // Defensive Actions
   | 'DEFENSIVE_REBOUND' | 'STEAL' | 'BLOCK' | 'FOUL'
+  // Additional Foul Types
+  | 'TECHNICAL_FOUL' | 'FLAGRANT_FOUL'
 
 export interface Action {
   type: ActionType
