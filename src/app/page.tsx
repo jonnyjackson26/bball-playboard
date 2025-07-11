@@ -211,7 +211,7 @@ export default function Home() {
         {/* Left Column */}
         <Panel minSize={15} defaultSize={22} className="flex flex-col h-full">
           <PanelGroup direction="vertical" className="h-full">
-            <Panel minSize={20} defaultSize={60} className="h-1/2 flex-1 min-h-0">
+            <Panel minSize={20} defaultSize={60} className="flex flex-col min-h-0">
               <TeamBox
                 teamName="Lakers"
                 players={awayPlayers}
@@ -224,7 +224,7 @@ export default function Home() {
             <PanelResizeHandle className="h-2 bg-gray-300 hover:bg-gray-400 transition-colors cursor-row-resize flex items-center justify-center">
               <div className="w-8 h-1 rounded bg-gray-500" />
             </PanelResizeHandle>
-            <Panel minSize={20} defaultSize={40} className="h-1/2 flex-1 min-h-0">
+            <Panel minSize={20} defaultSize={40} className="flex flex-col min-h-0">
               <ActionBox
                 selectedPlayer={selectedPlayer && selectedTeam === 'away' ? selectedPlayer : null}
                 onActionClick={handleActionClick}
@@ -245,8 +245,8 @@ export default function Home() {
             canRedo={redoStack.length > 0}
             onExport={handleExport}
           />
-          <PanelGroup direction="vertical" className="h-full flex-1">
-            <Panel minSize={20} defaultSize={35} className="min-h-0 flex-shrink-0">
+          <PanelGroup direction="vertical" className="flex-1 min-h-0">
+            <Panel minSize={20} defaultSize={35} className="flex flex-col min-h-0">
               <Scoreboard
                 homeTeam="Warriors"
                 awayTeam="Lakers"
@@ -257,7 +257,7 @@ export default function Home() {
             <PanelResizeHandle className="h-2 bg-gray-300 hover:bg-gray-400 transition-colors cursor-row-resize flex items-center justify-center">
               <div className="w-8 h-1 rounded bg-gray-500" />
             </PanelResizeHandle>
-            <Panel minSize={20} defaultSize={65} className="min-h-0 flex-1 flex flex-col">
+            <Panel minSize={20} defaultSize={65} className="flex flex-col min-h-0">
               <PlayByPlayBox plays={plays} />
             </Panel>
           </PanelGroup>
@@ -268,7 +268,7 @@ export default function Home() {
         {/* Right Column */}
         <Panel minSize={15} defaultSize={22} className="flex flex-col h-full">
           <PanelGroup direction="vertical" className="h-full">
-            <Panel minSize={20} defaultSize={60} className="h-1/2 flex-1 min-h-0">
+            <Panel minSize={20} defaultSize={60} className="flex flex-col min-h-0">
               <TeamBox
                 teamName="Warriors"
                 players={homePlayers}
@@ -281,7 +281,7 @@ export default function Home() {
             <PanelResizeHandle className="h-2 bg-gray-300 hover:bg-gray-400 transition-colors cursor-row-resize flex items-center justify-center">
               <div className="w-8 h-1 rounded bg-gray-500" />
             </PanelResizeHandle>
-            <Panel minSize={20} defaultSize={40} className="h-1/2 flex-1 min-h-0">
+            <Panel minSize={20} defaultSize={40} className="flex flex-col min-h-0">
               <ActionBox
                 selectedPlayer={selectedPlayer && selectedTeam === 'home' ? selectedPlayer : null}
                 onActionClick={handleActionClick}

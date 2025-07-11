@@ -55,44 +55,46 @@ export default function TeamBox({
   const showDivider = sortedPlayers.length > 5
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 w-full h-full flex flex-col flex-1 min-h-0">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-900 truncate">{teamName}</h2>
-        <button
-          onClick={onAddPlayer}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
-        >
-          + Add Player
-        </button>
-      </div>
-      <DndContext
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={sortedPlayers.map(p => p.id)} strategy={verticalListSortingStrategy}>
-          <div
-            className="flex-1 min-h-0 overflow-y-auto"
+    <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
+      <div className="p-4 pb-2 flex-shrink-0">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900 truncate">{teamName}</h2>
+          <button
+            onClick={onAddPlayer}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
           >
-            {sortedPlayers.map((player, idx) => (
-              <div key={player.id + (showDivider && idx === 4 ? '-with-divider' : '')}>
-                <PlayerCard
-                  player={player}
-                  isSelected={selectedPlayer?.id === player.id}
-                  onSelect={onPlayerSelect}
-                />
-                {/* Divider after 5th card if there are more */}
-                {showDivider && idx === 4 && (
-                  <div className="flex items-center my-2" style={{ height: DIVIDER_HEIGHT }}>
-                    <div className="flex-1 border-t border-gray-300"></div>
-                    <span className="px-3 text-sm text-gray-500 font-medium">BENCH</span>
-                    <div className="flex-1 border-t border-gray-300"></div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
+            + Add Player
+          </button>
+        </div>
+      </div>
+      <div className="flex-1 overflow-hidden">
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={sortedPlayers.map(p => p.id)} strategy={verticalListSortingStrategy}>
+            <div className="h-full overflow-y-auto px-4 pb-4">
+              {sortedPlayers.map((player, idx) => (
+                <div key={player.id + (showDivider && idx === 4 ? '-with-divider' : '')}>
+                  <PlayerCard
+                    player={player}
+                    isSelected={selectedPlayer?.id === player.id}
+                    onSelect={onPlayerSelect}
+                  />
+                  {/* Divider after 5th card if there are more */}
+                  {showDivider && idx === 4 && (
+                    <div className="flex items-center my-2" style={{ height: DIVIDER_HEIGHT }}>
+                      <div className="flex-1 border-t border-gray-300"></div>
+                      <span className="px-3 text-sm text-gray-500 font-medium">BENCH</span>
+                      <div className="flex-1 border-t border-gray-300"></div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      </div>
     </div>
   )
 } 

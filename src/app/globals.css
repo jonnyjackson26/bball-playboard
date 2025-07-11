@@ -24,3 +24,33 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Basic scrollbar styling */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Ensure drag-and-drop doesn't interfere with scrolling */
+[data-dnd-kit-sortable] {
+  touch-action: pan-y;
+}
+
+/* Prevent scroll interference from transform styles */
+[style*="transform"] {
+  will-change: transform;
+}
