@@ -1,6 +1,6 @@
 'use client'
 
-import { Play, Player, Action } from '@/types'
+import { Play, Player } from '@/types'
 import { useState } from 'react'
 import { Edit2, Trash2, BarChart3 } from 'lucide-react'
 
@@ -15,7 +15,7 @@ interface PlayByPlayBoxProps {
   onOpenStats?: () => void
 }
 
-export default function PlayByPlayBox({ plays, homePlayers, awayPlayers, homeScore, awayScore, onEditPlay, onDeletePlay, onOpenStats }: PlayByPlayBoxProps) {
+export default function PlayByPlayBox({ plays, homePlayers, awayPlayers, onEditPlay, onDeletePlay, onOpenStats }: PlayByPlayBoxProps) {
   const [editingPlayId, setEditingPlayId] = useState<string | null>(null)
   const [editPlayerName, setEditPlayerName] = useState('')
   const [editAction, setEditAction] = useState('')

@@ -17,9 +17,7 @@ interface TeamBoxProps {
   onDeletePlayer?: (playerId: string) => void
 }
 
-const PLAYER_CARD_HEIGHT = 56; // px, adjust if needed for your PlayerCard
 const DIVIDER_HEIGHT = 32; // px, adjust for divider
-const VISIBLE_CARDS = 5;
 
 export default function TeamBox({ 
   teamName, 

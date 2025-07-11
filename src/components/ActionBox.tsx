@@ -1,10 +1,10 @@
 'use client'
 
-import { Action } from '@/types'
+import { Action, Player } from '@/types'
 import { offensiveActions, defensiveActions } from '@/data/actions'
 
 interface ActionBoxProps {
-  selectedPlayer: any
+  selectedPlayer: Player | null
   onActionClick: (action: Action) => void
 }
 

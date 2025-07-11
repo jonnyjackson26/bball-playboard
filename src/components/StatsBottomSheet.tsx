@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Play, Player } from '@/types'
 import { X, TrendingUp, Target, Trophy, Users, BarChart3, Zap, Award } from 'lucide-react'
 
@@ -58,33 +58,30 @@ export default function StatsBottomSheet({
   const [activeTab, setActiveTab] = useState<'box-score' | 'shooting' | 'top-performers' | 'team-stats'>('box-score')
   const [isVisible, setIsVisible] = useState(false)
 
-  // Handle ESC key to close bottom sheet
-  useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isOpen) {
-        handleClose()
-      }
-    }
-
-    if (isOpen) {
-      setIsVisible(true)
-      document.addEventListener('keydown', handleEscKey)
-      // Prevent body scroll when bottom sheet is open
-      document.body.style.overflow = 'hidden'
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscKey)
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen])
-
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsVisible(false)
     setTimeout(() => {
       onClose()
     }, 300) // Match the transition duration
-  }
+  }, [onClose])
+
+  // Handle ESC key to close bottom sheet
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true)
+      document.body.style.overflow = 'hidden'
+      const handleEscKey = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          handleClose()
+        }
+      }
+      document.addEventListener('keydown', handleEscKey)
+      return () => {
+        document.removeEventListener('keydown', handleEscKey)
+        document.body.style.overflow = 'unset'
+      }
+    }
+  }, [isOpen, handleClose])
 
   // Calculate player statistics
   const calculatePlayerStats = (): PlayerStats[] => {
@@ -394,7 +391,7 @@ export default function StatsBottomSheet({
           {activeTab === 'shooting' && (
             <div className="p-6 min-h-[500px]">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {teamStats.map((team, index) => (
+                {teamStats.map((team) => (
                   <div key={team.team} className={`rounded-lg p-4 ${team.team === 'home' ? 'bg-blue-50' : 'bg-red-50'}`}>
                     <h3 className={`text-lg font-semibold mb-4 ${team.team === 'home' ? 'text-blue-900' : 'text-red-900'}`}>
                       {team.team === 'home' ? 'Home Team' : 'Away Team'} Shooting
@@ -532,7 +529,7 @@ export default function StatsBottomSheet({
           {activeTab === 'team-stats' && (
             <div className="p-6 min-h-[500px]">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {teamStats.map((team, index) => (
+                {teamStats.map((team) => (
                   <div key={team.team} className={`rounded-lg p-4 ${team.team === 'home' ? 'bg-blue-50' : 'bg-red-50'}`}>
                     <h3 className={`text-lg font-semibold mb-4 ${team.team === 'home' ? 'text-blue-900' : 'text-red-900'}`}>
                       {team.team === 'home' ? 'Home Team' : 'Away Team'} Stats
