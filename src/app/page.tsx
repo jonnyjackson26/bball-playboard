@@ -7,6 +7,7 @@ import ActionBox from '@/components/ActionBox'
 import Scoreboard from '@/components/Scoreboard'
 import PlayByPlayBox from '@/components/PlayByPlayBox'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import SettingsBar from '@/components/SettingsBar'
 
 // Sample data for demonstration
 const sampleHomePlayers: Player[] = [
@@ -36,6 +37,8 @@ export default function Home() {
   const [plays, setPlays] = useState<Play[]>([])
   const [homeScore, setHomeScore] = useState(0)
   const [awayScore, setAwayScore] = useState(0)
+  const [undoStack, setUndoStack] = useState<{plays: Play[], homeScore: number, awayScore: number}[]>([])
+  const [redoStack, setRedoStack] = useState<{plays: Play[], homeScore: number, awayScore: number}[]>([])
 
   const handlePlayerSelect = (player: Player) => {
     setSelectedPlayer(player)
@@ -43,6 +46,10 @@ export default function Home() {
 
   const handleActionClick = (action: Action) => {
     if (!selectedPlayer) return
+
+    // Save current state to undo stack
+    setUndoStack(prev => [{ plays, homeScore, awayScore }, ...prev])
+    setRedoStack([])
 
     const newPlay: Play = {
       id: Date.now().toString(),
@@ -54,10 +61,8 @@ export default function Home() {
       points: action.points || 0
     }
 
-    // Add play to the beginning of the array (newest first)
     setPlays(prev => [newPlay, ...prev])
 
-    // Update score if points were scored
     if (action.points) {
       if (selectedPlayer.team === 'home') {
         setHomeScore(prev => prev + action.points!)
@@ -66,8 +71,27 @@ export default function Home() {
       }
     }
 
-    // Clear selection after recording play
     setSelectedPlayer(null)
+  }
+
+  const handleUndo = () => {
+    if (undoStack.length === 0) return
+    setRedoStack(prev => [{ plays, homeScore, awayScore }, ...prev])
+    const last = undoStack[0]
+    setUndoStack(prev => prev.slice(1))
+    setPlays(last.plays)
+    setHomeScore(last.homeScore)
+    setAwayScore(last.awayScore)
+  }
+
+  const handleRedo = () => {
+    if (redoStack.length === 0) return
+    setUndoStack(prev => [{ plays, homeScore, awayScore }, ...prev])
+    const next = redoStack[0]
+    setRedoStack(prev => prev.slice(1))
+    setPlays(next.plays)
+    setHomeScore(next.homeScore)
+    setAwayScore(next.awayScore)
   }
 
   const handleHomePlayersReorder = (players: Player[]) => {
@@ -135,7 +159,14 @@ export default function Home() {
         </PanelResizeHandle>
         {/* Center Column */}
         <Panel minSize={20} defaultSize={56} className="flex flex-col h-full">
-          <PanelGroup direction="vertical" className="h-full">
+          {/* Fixed SettingsBar above the resizable PanelGroup */}
+          <SettingsBar
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            canUndo={undoStack.length > 0}
+            canRedo={redoStack.length > 0}
+          />
+          <PanelGroup direction="vertical" className="h-full flex-1">
             <Panel minSize={20} defaultSize={35} className="min-h-0 flex-shrink-0">
               <Scoreboard
                 homeTeam="Warriors"
