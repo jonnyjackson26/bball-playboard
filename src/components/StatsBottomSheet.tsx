@@ -567,6 +567,10 @@ export default function StatsBottomSheet({
                         <div className="text-2xl font-bold text-gray-900">{formatPercentage(team.fieldGoalPercentage)}</div>
                         <div className="text-sm text-gray-500">FG%</div>
                       </div>
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <div className="text-2xl font-bold text-gray-900">{formatPercentage(team.freeThrowPercentage)}</div>
+                        <div className="text-sm text-gray-500">FT%</div>
+                      </div>
                     </div>
                   </div>
                 ))}
