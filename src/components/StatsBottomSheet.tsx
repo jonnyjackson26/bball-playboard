@@ -123,7 +123,7 @@ export default function StatsBottomSheet({
         stats.fieldGoalsAttempted += 1
         stats.threePointersMade += 1
         stats.threePointersAttempted += 1
-      } else if (play.action.includes('FT Made')) {
+      } else if (play.action.includes('FT Made') || play.action.includes('Free Throw Made')) {
         stats.points += 1
         stats.freeThrowsMade += 1
         stats.freeThrowsAttempted += 1
@@ -132,7 +132,7 @@ export default function StatsBottomSheet({
       } else if (play.action.includes('3PT Miss')) {
         stats.fieldGoalsAttempted += 1
         stats.threePointersAttempted += 1
-      } else if (play.action.includes('FT Miss')) {
+      } else if (play.action.includes('FT Miss') || play.action.includes('Free Throw Missed')) {
         stats.freeThrowsAttempted += 1
       } else if (play.action.includes('Assist')) {
         stats.assists += 1
