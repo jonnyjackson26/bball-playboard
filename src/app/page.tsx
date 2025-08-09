@@ -42,6 +42,8 @@ export default function Home() {
   const [undoStack, setUndoStack] = useState<{plays: Play[], homeScore: number, awayScore: number}[]>([])
   const [redoStack, setRedoStack] = useState<{plays: Play[], homeScore: number, awayScore: number}[]>([])
   const [isStatsOpen, setIsStatsOpen] = useState(false)
+  const [homeTeamName, setHomeTeamName] = useState('Home')
+  const [awayTeamName, setAwayTeamName] = useState('Away')
 
   const handlePlayerSelect = (player: Player) => {
     setSelectedPlayer(player)
@@ -298,6 +300,14 @@ export default function Home() {
     }
   }
 
+  const handleHomeTeamNameChange = (newName: string) => {
+    setHomeTeamName(newName.slice(0, 19))
+  }
+
+  const handleAwayTeamNameChange = (newName: string) => {
+    setAwayTeamName(newName.slice(0, 19))
+  }
+
   // Determine which team is selected
   const selectedTeam = selectedPlayer?.team
 
@@ -309,14 +319,15 @@ export default function Home() {
           <PanelGroup direction="vertical" className="h-full">
             <Panel minSize={20} defaultSize={60} className="flex flex-col min-h-0">
               <TeamBox
-                teamName="Lakers"
-                players={awayPlayers}
+                teamName={homeTeamName}
+                players={homePlayers}
                 selectedPlayer={selectedPlayer}
                 onPlayerSelect={handlePlayerSelect}
-                onPlayersReorder={handleAwayPlayersReorder}
-                onAddPlayer={handleAddAwayPlayer}
-                onEditPlayer={handleEditAwayPlayer}
-                onDeletePlayer={handleDeleteAwayPlayer}
+                onPlayersReorder={handleHomePlayersReorder}
+                onAddPlayer={handleAddHomePlayer}
+                onEditPlayer={handleEditHomePlayer}
+                onDeletePlayer={handleDeleteHomePlayer}
+                onTeamNameChange={handleHomeTeamNameChange}
               />
             </Panel>
             <PanelResizeHandle className="h-2 bg-gray-300 hover:bg-gray-400 transition-colors cursor-row-resize flex items-center justify-center">
@@ -324,7 +335,7 @@ export default function Home() {
             </PanelResizeHandle>
             <Panel minSize={20} defaultSize={40} className="flex flex-col min-h-0">
               <ActionBox
-                selectedPlayer={selectedPlayer && selectedTeam === 'away' ? selectedPlayer : null}
+                selectedPlayer={selectedPlayer && selectedTeam === 'home' ? selectedPlayer : null}
                 onActionClick={handleActionClick}
               />
             </Panel>
@@ -346,8 +357,8 @@ export default function Home() {
           <PanelGroup direction="vertical" className="flex-1 min-h-0">
             <Panel minSize={20} defaultSize={35} className="flex flex-col min-h-0">
               <Scoreboard
-                homeTeam="Warriors"
-                awayTeam="Lakers"
+                homeTeam={homeTeamName}
+                awayTeam={awayTeamName}
                 homeScore={homeScore}
                 awayScore={awayScore}
               />
@@ -377,14 +388,15 @@ export default function Home() {
           <PanelGroup direction="vertical" className="h-full">
             <Panel minSize={20} defaultSize={60} className="flex flex-col min-h-0">
               <TeamBox
-                teamName="Warriors"
-                players={homePlayers}
+                teamName={awayTeamName}
+                players={awayPlayers}
                 selectedPlayer={selectedPlayer}
                 onPlayerSelect={handlePlayerSelect}
-                onPlayersReorder={handleHomePlayersReorder}
-                onAddPlayer={handleAddHomePlayer}
-                onEditPlayer={handleEditHomePlayer}
-                onDeletePlayer={handleDeleteHomePlayer}
+                onPlayersReorder={handleAwayPlayersReorder}
+                onAddPlayer={handleAddAwayPlayer}
+                onEditPlayer={handleEditAwayPlayer}
+                onDeletePlayer={handleDeleteAwayPlayer}
+                onTeamNameChange={handleAwayTeamNameChange}
               />
             </Panel>
             <PanelResizeHandle className="h-2 bg-gray-300 hover:bg-gray-400 transition-colors cursor-row-resize flex items-center justify-center">
@@ -392,7 +404,7 @@ export default function Home() {
             </PanelResizeHandle>
             <Panel minSize={20} defaultSize={40} className="flex flex-col min-h-0">
               <ActionBox
-                selectedPlayer={selectedPlayer && selectedTeam === 'home' ? selectedPlayer : null}
+                selectedPlayer={selectedPlayer && selectedTeam === 'away' ? selectedPlayer : null}
                 onActionClick={handleActionClick}
               />
             </Panel>

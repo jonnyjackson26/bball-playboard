@@ -4,6 +4,7 @@ import { Player } from '@/types'
 import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState, useEffect } from 'react'
+import { Edit } from 'lucide-react'
 import PlayerCard from './PlayerCard'
 
 interface TeamBoxProps {
@@ -15,6 +16,7 @@ interface TeamBoxProps {
   onAddPlayer: (name: string, jerseyNumber?: string | number) => void
   onEditPlayer?: (playerId: string, name: string, jerseyNumber?: string | number) => void
   onDeletePlayer?: (playerId: string) => void
+  onTeamNameChange?: (newName: string) => void
 }
 
 const DIVIDER_HEIGHT = 32; // px, adjust for divider
@@ -27,16 +29,23 @@ export default function TeamBox({
   onPlayersReorder,
   onAddPlayer,
   onEditPlayer,
-  onDeletePlayer
+  onDeletePlayer,
+  onTeamNameChange
 }: TeamBoxProps) {
   const [localPlayers, setLocalPlayers] = useState(players)
   const [showAddForm, setShowAddForm] = useState(false)
   const [newPlayerName, setNewPlayerName] = useState('')
   const [newPlayerNumber, setNewPlayerNumber] = useState('')
+  const [isEditingTeamName, setIsEditingTeamName] = useState(false)
+  const [editTeamName, setEditTeamName] = useState(teamName)
 
   useEffect(() => {
     setLocalPlayers(players)
   }, [players])
+
+  useEffect(() => {
+    setEditTeamName(teamName)
+  }, [teamName])
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -71,6 +80,24 @@ export default function TeamBox({
     setShowAddForm(false)
   }
 
+  const handleTeamNameEdit = () => {
+    const trimmed = editTeamName.trim()
+    if (!trimmed) {
+      setEditTeamName(teamName)
+      setIsEditingTeamName(false)
+      return
+    }
+    if (onTeamNameChange && trimmed !== teamName) {
+      onTeamNameChange(trimmed)
+    }
+    setIsEditingTeamName(false)
+  }
+
+  const handleCancelTeamNameEdit = () => {
+    setEditTeamName(teamName)
+    setIsEditingTeamName(false)
+  }
+
   // Combine starters and bench, but keep divider after 5th
   const sortedPlayers = [...localPlayers].sort((a, b) => a.position - b.position)
   const showDivider = sortedPlayers.length > 5
@@ -79,8 +106,40 @@ export default function TeamBox({
     <div className="bg-white rounded-lg shadow-lg h-full flex flex-col">
       <div className="p-4 pb-2 flex-shrink-0">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 truncate">{teamName}</h2>
-          {!showAddForm && (
+          {isEditingTeamName ? (
+            <div className="flex-1 mr-3">
+              <input
+                type="text"
+                value={editTeamName}
+                onChange={(e) => setEditTeamName(e.target.value)}
+                onBlur={handleTeamNameEdit}
+                maxLength={19}
+                className="w-full bg-transparent border-0 outline-none focus:outline-none text-xl font-bold text-gray-900 truncate p-0 m-0"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleTeamNameEdit()
+                  if (e.key === 'Escape') handleCancelTeamNameEdit()
+                }}
+              />
+            </div>
+          ) : (
+            <div className="flex items-center group cursor-pointer" onClick={() => onTeamNameChange && setIsEditingTeamName(true)}>
+              <h2 className="text-xl font-bold text-gray-900 truncate">{teamName}</h2>
+              {onTeamNameChange && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsEditingTeamName(true)
+                  }}
+                  className="ml-2 opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-gray-600 transition-all duration-200"
+                  title="Edit team name"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          )}
+          {!showAddForm && !isEditingTeamName && (
             <button
               onClick={() => setShowAddForm(true)}
               className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
