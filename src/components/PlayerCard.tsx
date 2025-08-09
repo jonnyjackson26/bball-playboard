@@ -3,7 +3,7 @@
 import { Player } from '@/types'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, MoreVertical, Edit, Trash2 } from 'lucide-react'
+import { GripVertical, Edit, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 interface PlayerCardProps {
@@ -16,6 +16,7 @@ interface PlayerCardProps {
 
 export default function PlayerCard({ player, isSelected, onSelect, onEdit, onDelete }: PlayerCardProps) {
   const [showMenu, setShowMenu] = useState(false)
+  const [menuPosition, setMenuPosition] = useState<{ x: number; y: number } | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(player.name)
   const [editJerseyNumber, setEditJerseyNumber] = useState(player.jerseyNumber?.toString() || '')
@@ -70,6 +71,13 @@ export default function PlayerCard({ player, isSelected, onSelect, onEdit, onDel
     setEditJerseyNumber(player.jerseyNumber?.toString() || '')
     setIsEditing(false)
     setShowMenu(false)
+  }
+
+  const handleContextMenu: React.MouseEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setShowMenu(true)
+    setMenuPosition({ x: event.clientX, y: event.clientY })
   }
 
   if (isEditing) {
@@ -139,6 +147,7 @@ export default function PlayerCard({ player, isSelected, onSelect, onEdit, onDel
       onClick={() => onSelect(player)}
       tabIndex={0}
       role="button"
+      onContextMenu={handleContextMenu}
     >
       {/* Drag handle */}
       <span
@@ -154,45 +163,6 @@ export default function PlayerCard({ player, isSelected, onSelect, onEdit, onDel
       <div className="flex-1 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className="font-semibold text-gray-900 text-sm">{player.name}</div>
-          {/* 3-dots menu - only visible on hover */}
-          <div className="relative opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowMenu(!showMenu)
-              }}
-              className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-              title="Player options"
-            >
-              <MoreVertical className="w-4 h-4" />
-            </button>
-            
-            {/* Dropdown menu */}
-            {showMenu && (
-              <div className="absolute left-0 top-full mt-1 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsEditing(true)
-                  }}
-                  className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-                >
-                  <Edit className="w-3 h-3" />
-                  <span>Edit</span>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleDelete()
-                  }}
-                  className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
-                >
-                  <Trash2 className="w-3 h-3" />
-                  <span>Delete</span>
-                </button>
-              </div>
-            )}
-          </div>
         </div>
         {player.jerseyNumber && (
           <div className="text-sm font-medium text-gray-600">
@@ -201,12 +171,42 @@ export default function PlayerCard({ player, isSelected, onSelect, onEdit, onDel
         )}
       </div>
       
-      {/* Click outside to close menu */}
-      {showMenu && (
-        <div
-          className="fixed inset-0 z-0"
-          onClick={() => setShowMenu(false)}
-        />
+      {/* Context menu opened via right-click */}
+      {showMenu && menuPosition && (
+        <>
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setShowMenu(false)}
+          />
+          <div
+            className="fixed z-50 w-36 bg-white border border-gray-200 rounded-lg shadow-lg"
+            style={{ left: menuPosition.x + 2, top: menuPosition.y + 2 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsEditing(true)
+                setShowMenu(false)
+              }}
+              className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+            >
+              <Edit className="w-3 h-3" />
+              <span>Edit</span>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowMenu(false)
+                handleDelete()
+              }}
+              className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
+            >
+              <Trash2 className="w-3 h-3" />
+              <span>Delete</span>
+            </button>
+          </div>
+        </>
       )}
     </div>
   )
